@@ -216,3 +216,7 @@ python detect.py --weights 权重路径 --img_path 图像路径 --visualize
 
 
 开发不易，**训练代码**部分有偿提供~ 
+
+Wechat:y24065939s
+
+CSDN:https://blog.csdn.net/z240626191s/article/details/137942794?fromshare=blogdetail

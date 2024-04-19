@@ -57,8 +57,8 @@ def fit_one_epoch(model_train, model, optimizer, epoch, epoch_step, epoch_step_v
                                 'accuracy'  : total_accuracy / (iteration + 1), 
                                 'lr'        : get_lr(optimizer)})
             pbar.update(1)
-            writer.add_scalar('Train/acc', total_accuracy / (iteration + 1), epoch * epoch_step + iteration)
-            writer.add_scalar('Train/Loss', total_loss / (iteration + 1), epoch * epoch_step + iteration)
+            writer.add_scalar('Train/acc', total_accuracy / (iteration + 1), (epoch - 1)*len(gen) + iteration)
+            writer.add_scalar('Train/Loss', total_loss / (iteration + 1), (epoch - 1)*len(gen) + iteration)
             writer.add_scalar('Train/lr', get_lr(optimizer), epoch * epoch_step + iteration)
 
     predictions = np.concatenate(predictions)  # shape is [180,2]
@@ -92,9 +92,9 @@ def fit_one_epoch(model_train, model, optimizer, epoch, epoch_step, epoch_step_v
         for iteration, batch in enumerate(gen_val):
             if iteration >= epoch_step_val:
                 break
-            images, targets = batch
+            images, targets = batch  # 均为array
             with torch.no_grad():
-                images  = torch.from_numpy(images).type(torch.FloatTensor)
+                images  = torch.from_numpy(images).type(torch.FloatTensor)  # array2tensor
                 targets = torch.from_numpy(targets).type(torch.FloatTensor).long()
                 if cuda:
                     images  = images.cuda()
@@ -116,6 +116,10 @@ def fit_one_epoch(model_train, model, optimizer, epoch, epoch_step, epoch_step_v
                                 'val_accuracy': val_accuracy / (iteration + 1),
                                 'lr': get_lr(optimizer)})
             pbar.update(1)
+            # writer.add_scalar('Val/acc', val_accuracy / (iteration + 1), epoch * epoch_step + iteration)
+            # writer.add_scalar('Val/Loss', val_loss / (iteration + 1), epoch * epoch_step + iteration)
+            writer.add_scalar('Val/acc', val_accuracy / (iteration + 1), (epoch - 1)*len(gen_val) + iteration)
+            writer.add_scalar('Val/Loss', val_loss / (iteration + 1), (epoch - 1)*len(gen_val) + iteration)
     logger.info('Finish Validation')
     logger.info('Epoch:' + str(epoch + 1) + '/' + str(Epoch))
     logger.info('Total Loss: %.3f || Val Loss: %.3f ' % (total_loss / epoch_step, val_loss / epoch_step_val))
